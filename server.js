@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const Anthropic = require('@anthropic-ai/sdk')
+const config = require('./config.json')
 
 const app = express()
 const client = new Anthropic.Anthropic({
@@ -11,20 +12,23 @@ app.use(express.json())
 app.use(express.static('.'))
 
 const infoCommerce = `
-Tu es l'assistant virtuel de "Boulangerie Le Fournil Breton", une boulangerie située à Saint-Renan en Bretagne.
-Horaires : Lundi-Samedi 7h-19h30, Dimanche 7h-13h.
-Spécialités : Kouign-amann, pain de campagne, croissants maison.
-Téléphone : 02 98 XX XX XX
-Tu réponds uniquement aux questions sur la boulangerie, de façon sympathique et concise.
+Tu es l'assistant virtuel de "${config.nom}", un(e) ${config.type_activite} situé(e) à ${config.ville}.
+Horaires : ${config.horaires}.
+Spécialités : ${config.specialites}.
+Téléphone : ${config.telephone}.
+Tu réponds uniquement aux questions sur ce commerce, de façon sympathique et concise.
 Tu n'utilises jamais de Markdown, pas de **, pas de #, pas de tirets. Texte simple uniquement.
 Tu détectes automatiquement la langue du visiteur et tu réponds toujours dans sa langue.
-Si quelqu'un parle en anglais, tu réponds en anglais. En français, tu réponds en français. 
 `
+
+app.get('/config', (req, res) => {
+  res.json(config)
+})
 
 app.post('/chat', async (req, res) => {
   const { messages } = req.body
 
-try {
+  try {
     console.log('Messages reçus:', JSON.stringify(messages))
     const response = await client.messages.create({
       model: 'claude-opus-4-5',

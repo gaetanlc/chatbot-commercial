@@ -12,7 +12,6 @@
       height: 100vh;
     }
 
-    /* Contenu fictif de la page */
     .page-content {
       padding: 40px;
       max-width: 800px;
@@ -22,7 +21,6 @@
     .page-content h1 { color: #333; margin-bottom: 16px; }
     .page-content p { color: #666; line-height: 1.6; margin-bottom: 12px; }
 
-    /* Bulle flottante */
     #chat-bubble {
       position: fixed;
       bottom: 24px;
@@ -43,7 +41,6 @@
 
     #chat-bubble:hover { transform: scale(1.1); }
 
-    /* Fenêtre chat */
     #chat-container {
       position: fixed;
       bottom: 100px;
@@ -62,9 +59,7 @@
       transition: transform 0.3s ease;
     }
 
-    #chat-container.open {
-      transform: scale(1);
-    }
+    #chat-container.open { transform: scale(1); }
 
     #chat-header {
       background: #c8873a;
@@ -93,16 +88,8 @@
       line-height: 1.4;
     }
 
-    .message.bot {
-      background: #f0f0f0;
-      align-self: flex-start;
-    }
-
-    .message.user {
-      background: #c8873a;
-      color: white;
-      align-self: flex-end;
-    }
+    .message.bot { background: #f0f0f0; align-self: flex-start; }
+    .message.user { background: #c8873a; color: white; align-self: flex-end; }
 
     .typing {
       display: flex;
@@ -160,20 +147,15 @@
 </head>
 <body>
 
-  <!-- Contenu fictif de la page -->
   <div class="page-content">
-    <h1>🥐 Boulangerie Le Fournil Breton</h1>
-    <p>Bienvenue sur notre site ! Nous sommes une boulangerie artisanale située au cœur de Saint-Renan en Bretagne.</p>
-    <p>Nos produits sont fabriqués chaque matin avec des ingrédients locaux et de qualité.</p>
-    <p>N'hésitez pas à nous poser vos questions via le chat en bas à droite ! 👉</p>
+    <h1 id="page-title"></h1>
+    <p>Bienvenue sur notre site ! N'hésitez pas à nous poser vos questions via le chat en bas à droite ! 👉</p>
   </div>
 
-  <!-- Bulle flottante -->
-  <div id="chat-bubble" onclick="toggleChat()">🥐</div>
+  <div id="chat-bubble" onclick="toggleChat()">💬</div>
 
-  <!-- Fenêtre chat -->
   <div id="chat-container">
-    <div id="chat-header">🥐 Boulangerie Le Fournil Breton</div>
+    <div id="chat-header"></div>
     <div id="chat-messages">
       <div class="message bot">Bonjour ! Comment puis-je vous aider ? 😊</div>
     </div>
@@ -193,10 +175,19 @@
     let conversationHistory = []
     let isOpen = false
 
+    async function loadConfig() {
+      const res = await fetch('/config')
+      const config = await res.json()
+      document.getElementById('page-title').textContent = '🏪 ' + config.nom
+      document.getElementById('chat-header').textContent = '💬 ' + config.nom
+    }
+
+    loadConfig()
+
     function toggleChat() {
       isOpen = !isOpen
       container.classList.toggle('open')
-      bubble.textContent = isOpen ? '✕' : '🥐'
+      bubble.textContent = isOpen ? '✕' : '💬'
       if (isOpen) input.focus()
     }
 
